@@ -1,5 +1,5 @@
-#define DISTANCE_DETECT 20
-#define DELAY_DETECT 3000
+#define DISTANCE_DETECT 300
+#define DELAY_DETECT 50
 #define MODE_PIN 11
 
 struct Feu {int pinRed; int pinYellow; int pinGreen; int red; int yellow; int green;};
@@ -124,7 +124,7 @@ long getDistance(Distance &distance)
 bool detectSomeone(Distance &distance)
 {
   int nbDetect = 0;
-  int nbLoop = 4;
+  int nbLoop = 3;
 
   for (int i = 0; i < nbLoop; i++) {
     long dist = getDistance(distance);
@@ -167,40 +167,28 @@ void detect()
     setFeu(feuDroite, LOW, HIGH, LOW);
     setFeu(feuGauche, LOW, HIGH, LOW);
     delay(700);
+    setFeu(feuDroite, HIGH, LOW, LOW);
+    setFeu(feuGauche, HIGH, LOW, LOW);
+    delay(700);
     do {
-      setFeu(feuDroite, HIGH, LOW, LOW);
-      setFeu(feuGauche, HIGH, LOW, LOW);
       delay(DELAY_DETECT);
     } while(detectSomeone(distancePedestrian));
   }
 
-  else if (detectSomeone(distanceDroite)) {
+  else if (detectSomeone(distanceDroite) || detectSomeone(distanceGauche)) {
     setPedestrian(pedestrian, HIGH, LOW);
     setFeu(feuDroite, LOW, LOW, HIGH);
-    setFeu(feuGauche, LOW, HIGH, LOW);
-    delay(700);
-    do {
-      setFeu(feuGauche, HIGH, LOW, LOW);
-      delay(DELAY_DETECT);
-    } while(detectSomeone(distanceDroite));
-  }
-
-  else if (detectSomeone(distanceGauche)) {
-    setPedestrian(pedestrian, HIGH, LOW);
     setFeu(feuGauche, LOW, LOW, HIGH);
-    setFeu(feuDroite, LOW, HIGH, LOW);
-    delay(700);
     do {
-      setFeu(feuDroite, HIGH, LOW, LOW);
       delay(DELAY_DETECT);
-    } while(detectSomeone(distanceGauche));
+    } while(detectSomeone(distanceDroite) || detectSomeone(distanceGauche));
   }
 
   else {
     setPedestrian(pedestrian, LOW, HIGH);
     setFeu(feuGauche, LOW, LOW, HIGH);
     setFeu(feuDroite, LOW, LOW, HIGH);
-    delay(400);
+    delay(DELAY_DETECT);
   }
 }
 
