@@ -105,6 +105,8 @@ void setPedestrian(Pedestrian &pedestrian, int red, int green)
  */
 long getDistance(Distance &distance)
 {
+  digitalWrite(distance.pinTrigger, LOW);
+  delayMicroseconds(2);
   digitalWrite(distance.pinTrigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(distance.pinTrigger, LOW);
